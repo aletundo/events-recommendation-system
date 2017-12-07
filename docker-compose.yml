@@ -7,14 +7,19 @@ services:
      - "8983:8983"
     networks:
       - backend
+
   recommendation-system-app:
-    build: recommendation-system-app/
+    build:
+      context: recommendation-system-app/
     image: recommendation-system-app:0.1.0
-    ports:
-      - "8080:8080"
+    working_dir: /var/www/recommendation-system-app
+    volumes:
+      - ./recommendation-system-app/:/var/www/recommendation-system-app/
     networks:
-      - backend
       - frontend
+      - backend
+    ports:
+      - "8080:80"
 
 networks:
   backend:
