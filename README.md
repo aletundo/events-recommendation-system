@@ -7,11 +7,19 @@ events based on user profile preferences.
 ## How to use
 
 ### How to crawl
-The `events-crawler.py` script is located within `fb-events-crawler/src` directory.
-It relies on [python-facebook-bot](https://github.com/tudoanh/python-facebook-bot)
-to get Facebook events given a location.
+The crawler relies on [python-facebook-bot](https://github.com/tudoanh/python-facebook-bot)
+to get Facebook events given a location. It is implemented with a simple script
+located within `fb-events-crawler/src` directory.
 
-First, you need to create a Facebook App for Developer.
+#### Preliminary steps
+First, you need to install some dependencies:
+
+```
+$ cd fb-events-crawler/
+$ pip3 install -r requirements.txt
+```
+
+Second, you need to create a Facebook App for Developer.
 Then, run `export` command for CLIENT_ID and CLIENT_SECRET.
 
 Example:  
@@ -19,9 +27,10 @@ Example:
  $ export CLIENT_ID="Your facebook app's ID"
  $ export CLIENT_SECRET="Your facebook app's secret key"
 ```
-
-After that, just run something like:
+#### Run the crawler
+Running the crawler is very simple, you need to run the following command:
 ```
+$ cd src/
 $ python3 events_crawler.py -lat 45.464211 -lng 9.191383
 ```
 Events will be stored as JSON files within `fb-events-crawler/data` directory.
