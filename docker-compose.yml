@@ -1,12 +1,18 @@
 version: "2.0"
 
 services:
-  solr-engine:
-    image: solr:7.1
-    ports:
-     - "8983:8983"
-    networks:
-      - backend
+  # solr-engine:
+  #   image: solr:7.1
+  #   ports:
+  #    - "8983:8983"
+  #   volumes:
+  #     - data:/opt/solr/server/solr/mycores
+  #   entrypoint:
+  #     - docker-entrypoint.sh
+  #     - solr-precreate
+  #     - events
+  #   networks:
+  #     - backend
 
   recommendation-system-app:
     build:
@@ -26,3 +32,6 @@ networks:
     driver: bridge
   frontend:
     driver: bridge
+
+volumes:
+  data:
