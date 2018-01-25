@@ -1,10 +1,156 @@
 #!/usr/bin/env python3
 # coding=utf-8
-import facebook, os, sys, json, pprint, copy
+import facebook, os, pprint, pymongo, pytz
+from dateutil import parser
+from datetime import datetime
+from pymongo import MongoClient
 
-CATEGORIES = ['Arte', 'Musica', 'Festa', 'Sport', 'Cibo']
-CITIES = ['Milano', 'Roma']
-
+client = MongoClient('localhost', 27017)
+db = client.recommendation_system
+rome_places = {
+    'Arte': [
+        {
+            'name': 'Vatican Museums - Musei Vaticani'
+        },
+        {
+            'name': 'Mercati di Traiano - Museo dei Fori Imperiali'
+        },
+        {
+            'name': 'Musei Capitolini'
+        },
+        {
+            'name': 'TAG - Tevere Art Gallery'
+        },
+        {
+            'name': 'Fusolab 2.0'
+        },
+        {
+            'name': 'Museo Del Vittoriano'
+        },
+        {
+            'name': 'Fori Imperiali'
+        },
+        {
+            'name': 'Scuderie del Quirinale'
+        },
+        {
+            'name': 'Vatican Museums - Musei Vaticani'
+        },
+        {
+            'name': 'Museo dell\'Ara Pacis'
+        },
+        {
+            'name': 'Villa Farnesina'
+        }
+    ],
+    'Festa': [
+        {
+            'name': 'Art Cafè'
+        },
+        {
+            'name': 'Ex Magazzini'
+        },
+        {
+            'name': 'Circolo Degli Illuminati'
+        },
+        {
+            'name': 'BARRIO LATINO'
+        },
+        {
+            'name': 'Room 26'
+        },
+        {
+            'name': 'La Suite'
+        },
+        {
+            'name': 'Spazio Novecento Ufficiale'
+        },
+        {
+            'name': 'Shari Vari'
+        },
+        {
+            'name': 'Piper Club Roma - Official'
+        }
+    ],
+    'Sport' : [
+        {
+            'name': 'LUNGOTEVERE FITNESS'
+        },
+        {
+            'name': 'Italiana Fitness®'
+        },
+        {
+            'name': 'Heaven Fight Arena'
+        },
+        {
+            'name': 'Otzuka Club - Arti Marziali'
+        },
+        {
+            'name': 'Le Palme Sporting Club'
+        },
+        {
+            'name': 'Asc Danza'
+        },
+        {
+            'name': 'SSD Bracelli Club'
+        },
+        {
+            'name': 'Karting Roma'
+        }
+    ],
+    'Musica' : [
+        {
+            'name': 'Auditorium Parco della Musica - Roma'
+        },
+        {
+            'name': 'Accademia Nazionale di Santa Cecilia'
+        },
+        {
+            'name': 'Roma Atlantico Live'
+        },
+        {
+            'name': 'Largo venue'
+        },
+        {
+            'name': 'CrossRoads Live Club'
+        },
+        {
+            'name': 'Wishlist Club'
+        },
+        {
+            'name': 'Lanificio159'
+        },
+        {
+            'name': 'ORION'
+        }
+    ],
+    'Cibo' : [
+        {
+            'name': 'Mozzico'
+        },
+        {
+            'name': 'Porto Fluviale'
+        },
+        {
+            'name': 'Sweet King'
+        },
+        {
+            'name': 'Haus Garten'
+        },
+        {
+            'name': 'Bancovino'
+        },
+        {
+            'name': 'FAD Burger and Bistrot - Centocelle'
+        },
+        {
+            'name': 'Eataly'
+        },
+        {
+            'name': 'Tavernacolo Roma Aurelio'
+        }
+    ]
+}
 milan_places = {
     'Arte': [
         {
@@ -37,7 +183,7 @@ milan_places = {
     ],
     'Festa': [
         {
-            'name': 'Alcatraz'
+            'name': 'Alcatraz - Milano'
         },
         {
             'name': 'AMNESIA milano'
@@ -163,15 +309,15 @@ def get_graph_instance():
     graph = facebook.GraphAPI(access_token=access_token, version="2.11")
     return graph
 
-def collect_places_id(graph, places):
+def collect_places_id(graph, places, city):
     for place in places:
-        places_response = graph.search(type='place', q=place['name'], fields='id,name')
+        places_response = graph.search(type='place', q=place['name'], fields='id,name,location{city}')
         results = places_response['data']
         if not results:
             raise ValueError('Place not found! Remove: ' + place['name'])
         else:
             for r in results:
-                if r['name'] == place['name']:
+                if r['name'] == place['name'] and (r['location']['city'] == city[0] or r['location']['city'] == city[1]):
                     place['id'] = r['id']
                     break
 
@@ -181,9 +327,9 @@ def collect_places_id(graph, places):
 
 def collect_events_by_place_id(graph, place_id, after=None, results=list()):
     if after == None:
-        events_response = graph.get_object(id=place_id+'/events', fields='name,description,start_time,end_time,id,picture{url}')
+        events_response = graph.get_object(id=place_id+'/events', fields='name,description,place{name},start_time,end_time,id,picture{url}')
     else:
-        events_response = graph.get_object(id=place_id+'/events', fields='name,description,start_time,end_time,id,picture{url}', after=after)
+        events_response = graph.get_object(id=place_id+'/events', fields='name,description,place{name},start_time,end_time,id,picture{url}', after=after)
 
     if events_response['data']:
         results.extend(events_response['data'])
@@ -191,22 +337,30 @@ def collect_events_by_place_id(graph, place_id, after=None, results=list()):
     if 'paging' in events_response.keys():
         collect_events_by_place_id(graph, place_id, events_response['paging']['cursors']['after'], results)
 
-    return results
+    filtered_results = [x for x in results if parser.parse(x['start_time']) >= datetime(2017, 12, 1, 0, 0, 0, tzinfo=pytz.UTC)]
+    return filtered_results
 
 def collect_events(graph, places, category, city):
+    all_events = list()
     for place in places:
         events = collect_events_by_place_id(graph, place['id'])
         for event in events:
             event['category'] = category
             event['city'] = city
-        place['events'] = events
-    return places
+        all_events.extend(events)
+    try:
+        db.events.insert_many(all_events, ordered=False)
+    except pymongo.errors.BulkWriteError as e:
+        pass
+    return all_events
 
 graph = get_graph_instance()
+milan_events = list()
 for category in milan_places.keys():
-    milan_places[category] = collect_places_id(graph, milan_places[category])
-    milan_places[category] = collect_events(graph, milan_places[category], category, 'Milano')
+    milan_places[category] = collect_places_id(graph, milan_places[category], ['Milano', 'Milan'])
+    milan_events = collect_events(graph, milan_places[category], category, 'Milano')
 
+rome_events = list()
 for category in rome_places.keys():
-    rome_places[category] = collect_places_id(graph, rome_places[category])
-    rome_places[category] = collect_events(graph, rome_places[category], category, 'Roma')
+    rome_places[category] = collect_places_id(graph, rome_places[category], ['Roma', 'Rome'])
+    rome_events = collect_events(graph, rome_places[category], category, 'Roma')

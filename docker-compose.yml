@@ -1,18 +1,12 @@
-version: "2.0"
+version: '3.4'
 
 services:
-  # solr-engine:
-  #   image: solr:7.1
-  #   ports:
-  #    - "8983:8983"
-  #   volumes:
-  #     - data:/opt/solr/server/solr/mycores
-  #   entrypoint:
-  #     - docker-entrypoint.sh
-  #     - solr-precreate
-  #     - events
-  #   networks:
-  #     - backend
+  mongodb:
+    image: mongo:3.6-jessie
+    ports:
+      - 27017:27017
+    networks:
+      - mongodb
 
   recommendation-system-app:
     build:
@@ -31,6 +25,8 @@ networks:
   backend:
     driver: bridge
   frontend:
+    driver: bridge
+  mongodb:
     driver: bridge
 
 volumes:
