@@ -6,8 +6,9 @@ services:
       context: recommendation-system-app/
     image: recommendation-system-app:0.1.0
     working_dir: /var/www/recommendation-system-app
-    volumes:
-      - ./recommendation-system-app/:/var/www/recommendation-system-app/
+    env_file: ./recommendation-system-app/.env
+    depends_on:
+      - recommendation-system-engine
     networks:
       - backend
     ports:
@@ -25,9 +26,17 @@ services:
       - backend
       - mongodb
   mongodb:
+    restart: always
     image: mongo:3.6-jessie
     ports:
       - 27017:27017
+    volumes:
+      - type: volume
+        source: mongo-config
+        target: /data/configdb
+      - type: volume
+        source: mongo-data
+        target: /data/db
     networks:
       - mongodb
 networks:
@@ -35,6 +44,6 @@ networks:
     driver: bridge
   mongodb:
     driver: bridge
-
 volumes:
-  data:
+  mongo-data:
+  mongo-config:
