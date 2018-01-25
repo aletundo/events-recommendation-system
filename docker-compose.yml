@@ -1,13 +1,6 @@
 version: '3.4'
 
 services:
-  mongodb:
-    image: mongo:3.6-jessie
-    ports:
-      - 27017:27017
-    networks:
-      - mongodb
-
   recommendation-system-app:
     build:
       context: recommendation-system-app/
@@ -16,15 +9,29 @@ services:
     volumes:
       - ./recommendation-system-app/:/var/www/recommendation-system-app/
     networks:
-      - frontend
       - backend
     ports:
-      - "8080:80"
-
+      - 8080:80
+  recommendation-system-engine:
+    build:
+      context: recommendation-system-engine/
+    image: recommendation-system-engine:0.1.0
+    working_dir: /var/www/recommendation-system-engine
+    expose:
+      - 5000
+    volumes:
+      - ./recommendation-system-engine/:/var/www/recommendation-system-engine/
+    networks:
+      - backend
+      - mongodb
+  mongodb:
+    image: mongo:3.6-jessie
+    ports:
+      - 27017:27017
+    networks:
+      - mongodb
 networks:
   backend:
-    driver: bridge
-  frontend:
     driver: bridge
   mongodb:
     driver: bridge
