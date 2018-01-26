@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 # coding=utf-8
-import facebook, os, pprint, pymongo, pytz
+import facebook, os, pytz
 from dateutil import parser
 from datetime import datetime
-from pymongo import MongoClient
+import json
 
-client = MongoClient('localhost', 27017)
-db = client.recommendation_system
 rome_places = {
     'Arte': [
         {
@@ -217,9 +215,9 @@ milan_places = {
         {
             'name': 'MTB Milano Trail Bike'
         },
-        {
-            'name': 'Befly - Flying Trapeze Milano'
-        },
+        # {
+        #     'name': 'Befly - Flying Trapeze Milano'
+        # },
         {
             'name': 'Stadio San Siro'
         },
@@ -309,7 +307,7 @@ def get_graph_instance():
     graph = facebook.GraphAPI(access_token=access_token, version="2.11")
     return graph
 
-def collect_places_id(graph, places, city):
+def collect_places_id(graph, places, category, city):
     for place in places:
         places_response = graph.search(type='place', q=place['name'], fields='id,name,location{city}')
         results = places_response['data']
@@ -323,6 +321,7 @@ def collect_places_id(graph, places, city):
 
         if not 'id' in place:
             raise ValueError('Place not found! Remove: ' + place['name'])
+    print('Collected {} places id for {}'.format(category, city[1]))
     return places
 
 def collect_events_by_place_id(graph, place_id, after=None, results=list()):
@@ -348,19 +347,30 @@ def collect_events(graph, places, category, city):
             event['category'] = category
             event['city'] = city
         all_events.extend(events)
-    try:
-        db.events.insert_many(all_events, ordered=False)
-    except pymongo.errors.BulkWriteError as e:
-        pass
+        print('Collected events for {}'.format(place['name']))
     return all_events
+
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+data_dir = '../../recommendation-system-engine/data'
+if not os.path.isdir(data_dir):
+    os.makedirs(data_dir)
+    print('Data directory created')
 
 graph = get_graph_instance()
 milan_events = list()
 for category in milan_places.keys():
-    milan_places[category] = collect_places_id(graph, milan_places[category], ['Milano', 'Milan'])
-    milan_events = collect_events(graph, milan_places[category], category, 'Milano')
+    milan_places[category] = collect_places_id(graph, milan_places[category], category, ['Milano', 'Milan'])
+    milan_events.extend(collect_events(graph, milan_places[category], category, 'Milano'))
+
+with open(data_dir + '/Milan_events.json', 'w') as outfile:
+    json.dump(milan_events, outfile, ensure_ascii=False)
+    print('Created Rome JSON file')
 
 rome_events = list()
 for category in rome_places.keys():
-    rome_places[category] = collect_places_id(graph, rome_places[category], ['Roma', 'Rome'])
+    rome_places[category] = collect_places_id(graph, rome_places[category], category, ['Roma', 'Rome'])
     rome_events = collect_events(graph, rome_places[category], category, 'Roma')
+
+with open(data_dir + '/Rome_events.json', 'w') as outfile:
+    json.dump(rome_events, outfile, ensure_ascii=False)
+    print('Created Rome events JSON file')
