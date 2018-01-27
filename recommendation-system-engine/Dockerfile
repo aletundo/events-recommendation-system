@@ -1,4 +1,4 @@
-FROM python:alpine
+FROM strayge/alpine-py3-numpy-scipy:latest
 WORKDIR /var/www/recommendation-system-engine
 COPY ./requirements.txt /var/www/recommendation-system-engine/requirements.txt
 RUN pip install -r requirements.txt
