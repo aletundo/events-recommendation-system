@@ -4,9 +4,8 @@ from flask import current_app, g
 
 def init_db():
     with current_app.app_context():
-        result = query_db('SELECT name FROM sqlite_master WHERE type=? AND name=?', ('table', 'user_event'), True)
-        if result is None:
-            query_db('CREATE TABLE user_event (user_id VARCHAR, event_id VARCHAR, partecipated INT)')
+        query_db('DROP TABLE IF EXISTS user_event')
+        query_db('CREATE TABLE user_event (user_id VARCHAR, event_id VARCHAR, partecipated INT)')
 
 def get_db():
     db = getattr(g, '_database', None)
