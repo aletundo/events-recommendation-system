@@ -4,9 +4,8 @@ from flask import Flask, g, current_app
 from flask_pymongo import PyMongo
 from utils import sqlite as sqlite_utils
 from utils import mongodb as mongodb_utils
+from utils import matrix_sim as simulation_utils
 from bson.json_util import dumps
-import json
-from random import randint
 
 app = Flask('recommendation-system-engine', instance_relative_config=True)
 app.config.from_object('config')
@@ -29,6 +28,8 @@ def init_data():
     sqlite_utils.init_db()
     mongodb_utils.init_users_collection(mongo)
     mongodb_utils.init_events_collection(mongo)
+    simulation_utils.simulate_users_events(mongo)
+
 
 @app.teardown_appcontext
 def close_connection(exception):
