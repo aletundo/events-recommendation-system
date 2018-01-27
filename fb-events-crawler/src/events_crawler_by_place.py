@@ -324,28 +324,38 @@ def collect_places_id(graph, places, category, city):
     print('Collected {} places id for {}'.format(category, city[1]))
     return places
 
-def collect_events_by_place_id(graph, place_id, after=None, results=list()):
+def collect_events_by_place_id(graph, place_id, city, after=None, results=list()):
     if after == None:
-        events_response = graph.get_object(id=place_id+'/events', fields='name,description,place{name},start_time,end_time,id,picture{url}')
+        events_response = graph.get_object(id=place_id+'/events', fields='name,description,place{name,location{city}},start_time,end_time,id,picture{url}')
     else:
-        events_response = graph.get_object(id=place_id+'/events', fields='name,description,place{name},start_time,end_time,id,picture{url}', after=after)
+        events_response = graph.get_object(id=place_id+'/events', fields='name,description,place{name,location{city}},start_time,end_time,id,picture{url}', after=after)
 
     if events_response['data']:
         results.extend(events_response['data'])
 
     if 'paging' in events_response.keys():
-        collect_events_by_place_id(graph, place_id, events_response['paging']['cursors']['after'], results)
-
-    filtered_results = [x for x in results if parser.parse(x['start_time']) >= datetime(2017, 12, 1, 0, 0, 0, tzinfo=pytz.UTC)]
+        collect_events_by_place_id(graph, place_id, city, events_response['paging']['cursors']['after'], results)
+    filtered_results = [
+        x for x in results
+        if parser.parse(x['start_time']) >= datetime(2017, 12, 1, 0, 0, 0, tzinfo=pytz.UTC)
+        and 'place' in x.keys()
+        and isinstance(x['place'], dict)
+        and 'location' in x['place'].keys()
+        and isinstance(x['place']['location'], dict)
+        and 'city' in x['place']['location'].keys()
+        and (x['place']['location']['city'] == city[0] or x['place']['location']['city'] == city[1])
+    ]
     return filtered_results
 
 def collect_events(graph, places, category, city):
     all_events = list()
     for place in places:
-        events = collect_events_by_place_id(graph, place['id'])
+        events = collect_events_by_place_id(graph, place['id'], city)
         for event in events:
             event['category'] = category
-            event['city'] = city
+            event['place'] = event['place']['name']
+            event['city'] = city[0]
+        print(events)
         all_events.extend(events)
         print('Collected events for {}'.format(place['name']))
     return all_events
@@ -360,16 +370,16 @@ graph = get_graph_instance()
 milan_events = list()
 for category in milan_places.keys():
     milan_places[category] = collect_places_id(graph, milan_places[category], category, ['Milano', 'Milan'])
-    milan_events.extend(collect_events(graph, milan_places[category], category, 'Milano'))
+    milan_events.extend(collect_events(graph, milan_places[category], category, ['Milano', 'Milan']))
 
 with open(data_dir + '/Milan_events.json', 'w') as outfile:
     json.dump(milan_events, outfile, ensure_ascii=False)
-    print('Created Rome JSON file')
+    print('Created Milan events JSON file')
 
 rome_events = list()
 for category in rome_places.keys():
     rome_places[category] = collect_places_id(graph, rome_places[category], category, ['Roma', 'Rome'])
-    rome_events = collect_events(graph, rome_places[category], category, 'Roma')
+    rome_events = collect_events(graph, rome_places[category], category, ['Roma', 'Rome'])
 
 with open(data_dir + '/Rome_events.json', 'w') as outfile:
     json.dump(rome_events, outfile, ensure_ascii=False)
