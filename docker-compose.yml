@@ -13,13 +13,13 @@ services:
       - backend
     ports:
       - 8080:80
+    volumes:
+      - ./recommendation-system-app/:/var/www/recommendation-system-app/
   recommendation-system-engine:
     build:
       context: recommendation-system-engine/
     image: recommendation-system-engine:0.1.0
     working_dir: /var/www/recommendation-system-engine
-    expose:
-      - 5000
     ports:
       - 5000:5000
     volumes:
@@ -30,8 +30,6 @@ services:
   mongodb:
     restart: always
     image: mongo:3.6-jessie
-    ports:
-      - 27017:27017
     volumes:
       - type: volume
         source: mongo-config
