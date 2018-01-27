@@ -30,16 +30,17 @@ def recommendations(user_id):
     target_user = mongodb_utils.get_users_collection(mongo).find_one({'_id': ObjectId(user_id)})
     users_list = list(mongodb_utils.get_users_collection(mongo).find({'_id': {'$ne': ObjectId(user_id)}}))
     similar_users_list = list()
+    events_to_suggest = set()
     threshold = 0.05
     for user in users_list:
         target_user_events = [e['event_id'] for e in sqlite_utils.query_db('SELECT event_id FROM user_event WHERE user_id = ?', (user_id,)) if 'event_id' in e and e['event_id'] != 'None']
         user_events =  [e['event_id'] for e in sqlite_utils.query_db('SELECT event_id FROM user_event WHERE user_id = ?', (str(user.get('_id')),)) if 'event_id' in e and e['event_id'] != 'None']
         similarity = users_similarity(target_user, user, target_user_events, user_events)
-        current_app.logger.info(similarity)
         if similarity >= threshold:
             similar_users_list.append(user)
+            events_to_suggest = events_to_suggest.union(set(user_events).difference(set(target_user_events)))
 
-    return dumps(similar_users_list)
+    return dumps({'events': events_to_suggest, 'users': similar_users_list})
 
 def category_normalization(user_category_freq):
     freq_sum = 0
@@ -55,7 +56,7 @@ def users_similarity(target_user, other_user, target_user_events, other_user_eve
 
     target_user_events_set = set(target_user_events)
     other_user_events_set = set(other_user_events)
-    common_events = set.intersection(target_user_events_set, other_user_events_set)
+    common_events = target_user_events_set.intersection(other_user_events_set)
     current_app.logger.info(common_events)
 
     target_user_vect = []
