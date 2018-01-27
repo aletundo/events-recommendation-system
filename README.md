@@ -35,6 +35,7 @@ Running the crawler is very simple, you need to run the following command:
 ```
 $ cd src/
 $ python3 events_crawler_by_place.py
+```
 
 ## Versioning
 
