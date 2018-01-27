@@ -2,7 +2,9 @@
 use Illuminate\Http\Request;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
-
+use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -24,5 +26,16 @@ Route::get('/', function () {
 Route::get('/events', function (Request $request) {
     $client = new Client(['base_uri' => 'http://recommendation-system-engine:5000/']);
     $response = $client->get('users/' . $request->user . '/recommendations');
-    return $response->getBody();
+    $results = json_decode($response->getBody());
+    $users = $results->users;
+    $events = collect($results->events);
+    return view('results', ['users' => $users, 'events' => paginateCollection($events, 20)]);
 })->name('events');
+
+function paginateCollection(Collection $collection, int $perPage){
+    $currentPage = LengthAwarePaginator::resolveCurrentPage();
+    $currentPageItems = $collection->forPage($currentPage, $perPage);
+    $paginator = new LengthAwarePaginator($currentPageItems, count($collection), $perPage);
+    $paginator->setPath(app()->request->url());
+    return $paginator;
+}

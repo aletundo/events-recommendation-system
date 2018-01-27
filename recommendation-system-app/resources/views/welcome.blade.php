@@ -53,7 +53,6 @@
     <h2 class="header orange-text"></h1>
     <div class="row">
       <form class="col s12" action="{{ route('events') }}" method="get">
-        {{ csrf_field() }}
         <div class="row">
           <div class="input-field col s12 m12">
             <select class="icons" name="user">
@@ -66,7 +65,7 @@
           </div>
         </div>
         <div class="row center">
-          <button class="btn waves-effect waves-light" type="submit" name="action">Inspire me
+          <button class="btn waves-effect waves-light pulse" type="submit" name="action">Inspire me
             <i class="material-icons right">wb_incandescent</i>
           </button>
         </div>
