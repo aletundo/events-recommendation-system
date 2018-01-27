@@ -1,4 +1,7 @@
 <?php
+use Illuminate\Http\Request;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Client;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,5 +15,14 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    $client = new Client(['base_uri' => 'http://recommendation-system-engine:5000/']);
+    $response = $client->get('users');
+    $users = json_decode($response->getBody());
+    return view('welcome', ['users' => $users]);
+})->name('welcome');
+
+Route::get('/events', function (Request $request) {
+    $client = new Client(['base_uri' => 'http://recommendation-system-engine:5000/']);
+    $response = $client->get('users/' . $request->user . '/recommendations');
+    return $response->getBody();
+})->name('events');
