@@ -16,6 +16,7 @@
   </div>
 @endsection
 @section('container')
+  <div class="container">
   <div class="section">
 
     <!--   Icon Section   -->
@@ -53,15 +54,27 @@
     <h2 class="header orange-text"></h1>
     <div class="row">
       <form class="col s12" action="{{ route('events') }}" method="get">
+        @foreach (['Arte', 'Cibo', 'Festa', 'Musica', 'Sport'] as $value)
+          <input type="hidden" name="categories[]" value="{{$value}}">
+        @endforeach
         <div class="row">
-          <div class="input-field col s12 m12">
-            <select class="icons" name="user">
+          <div class="input-field col s12 m8">
+            <select class="icons" name="user" required>
               <option selected value="" disabled>Choose a user</option>
               @foreach ($users as $user)
                 <option value="{{ $user->_id->{'$oid'} }}" data-icon="{{ $user->avatar }}">{{ $user->firstname .' '. $user->lastname }}</option>
               @endforeach
             </select>
-            <label>Users</label>
+            <label>User *</label>
+          </div>
+          <div class="input-field col s12 m4">
+            <select multiple name="features[]">
+              <option selected value="" disabled>Choose a feature (optional)</option>
+              <option value="gender">City</option>
+              <option value="city">Gender</option>
+              <option value="age">Age</option>
+            </select>
+            <label>Features</label>
           </div>
         </div>
         <div class="row center">
@@ -72,6 +85,7 @@
       </form>
     </div>
   </div>
+</div>
   <br><br>
 @endsection
 @section('scripts')

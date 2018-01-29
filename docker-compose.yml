@@ -16,6 +16,7 @@ services:
     volumes:
       - ./recommendation-system-app/:/var/www/recommendation-system-app/
   recommendation-system-engine:
+    restart: on-failure
     build:
       context: recommendation-system-engine/
     image: recommendation-system-engine:0.1.0

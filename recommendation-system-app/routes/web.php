@@ -25,11 +25,25 @@ Route::get('/', function () {
 
 Route::get('/events', function (Request $request) {
     $client = new Client(['base_uri' => 'http://recommendation-system-engine:5000/']);
-    $response = $client->get('users/' . $request->user . '/recommendations');
+    $response = $client->get('users/' . $request->user . '/recommendations', [
+      'query' => isset($request->features) ? ['features' => $request->features ] : [],
+    ]);
     $results = json_decode($response->getBody());
     $users = $results->users;
     $events = collect($results->events);
-    return view('results', ['users' => $users, 'events' => paginateCollection($events, 20)]);
+    if ($request->sort) {
+      $events = $events->sortBy('category');
+    }
+    if($request->categories) {
+      $categories = $request->categories;
+      $filtered = $events->filter(function ($value, $key) use ($categories) {
+        if (in_array($value->category, $categories)) {
+          return $value;
+        }
+      });
+      return view('results', ['users' => $users, 'events' => paginateCollection($filtered, 12)]);
+    }
+    return view('results', ['users' => $users, 'events' => paginateCollection($events, 12)]);
 })->name('events');
 
 function paginateCollection(Collection $collection, int $perPage){

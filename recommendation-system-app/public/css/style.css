@@ -12,3 +12,29 @@
 .icon-block .material-icons {
 	font-size: inherit;
 }
+.events {
+  display: flex;
+  justify-content: center;
+}
+.event-column {
+  margin-left: 0 !important;
+}
+.event {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.card-content {
+  flex: 1;
+}
+.card .card-title {
+  font-size: 1.2em;
+}
+i.material-icons { vertical-align: text-bottom !important; }
+.switch label input[type=checkbox]:checked+.lever {
+  background-color: #fa3;
+}
+
+.switch label input[type=checkbox]:checked+.lever:after {
+  background-color: #f93;
+}

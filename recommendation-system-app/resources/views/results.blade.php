@@ -5,13 +5,13 @@
   </div>
   <div class="section" id="results">
     <div class="row">
-      <div class="col s2">
+      <div class="col s3">
         <h5 class="light-blue-text">Similar users</h5>
         <ul class="collection">
         @foreach ($users as $user)
           <li class="collection-item avatar">
             <img src="{{ $user->avatar }}" alt="" class="circle">
-            <span class="title">{{ $user->firstname }} {{ $user->lastname }}</span>
+            <span class="title event-title">{{ $user->firstname }} {{ $user->lastname }}</span>
             <p>
               <span><i class="material-icons">location_city</i>&nbsp;{{ $user->city }}</span>
               <br>
@@ -23,20 +23,60 @@
         @endforeach
         </ul>
       </div>
-      <div class="col s10">
-        <h5 class="light-blue-text">Events</h5>
-        <div class="row center">
-          {{ $events->appends(['user' => request()->user])->links() }}
+      <div class="col s9">
+        <div class="row">
+          <h5 class="light-blue-text">Events</h5>
+        </div>
+        <div class="row center vertical-align">
+          <form action="{{ url()->full() }}" method="get">
+            <input type="hidden" name="user" value="{{ request()->user }}">
+            <div class="col s5">
+              <div class="input-field">
+                <select multiple name="categories[]">
+                  <option value="Arte" @if (in_array('Arte', request()->categories)) selected @endif>Arte</option>
+                  <option value="Cibo" @if (in_array('Cibo',request()->categories)) selected @endif>Cibo</option>
+                  <option value="Festa" @if (in_array('Festa',request()->categories)) selected @endif>Festa</option>
+                  <option value="Musica" @if (in_array('Musica',request()->categories)) selected @endif>Musica</option>
+                  <option value="Sport" @if (in_array('Sport',request()->categories)) selected @endif>Sport</option>
+                </select>
+                <label>Categories</label>
+              </div>
+            </div>
+            <div class="col s3">
+              <label>Sort by category</label>
+                 <div class="switch"><label>Off<input type="checkbox" name="sort" @isset(request()->sort))
+                   checked
+                 @endisset>
+                    <span class="lever"></span>On</label></div>
+            </div>
+            <div class="col s4">
+              <button class="btn waves-effect waves-light orange" type="submit" name="action">Refresh
+                <i class="material-icons right">refresh</i>
+              </button>
+            </div>
+            {{-- <div class="col s6">
+              {{ $events->appends([
+                'user' => request()->user,
+                'categories' => request()->categories,
+                'features' => request()->features,
+                ])->links() }}
+            </div>
+            <div class="col s3">
+              <label>Sort by category</label>
+                 <div class="switch"><label>Off<input type="checkbox">
+                    <span class="lever"></span>On</label></div>
+            </div> --}}
+          </form>
         </div>
         @php
           $elements_counter = 0;
         @endphp
         @foreach ($events as $event)
           @if($elements_counter === 0)
-          <div class="row">
+          <div class="row events">
           @endif
-            <div class="col s4">
-              <div class="card sticky-action">
+            <div class="col s4 event-column">
+              <div class="card sticky-action event">
                 <div class="card-image waves-effect waves-block waves-light">
                   <img class="activator" src="{{ $event->picture->data->url }}">
                 </div>
@@ -73,7 +113,12 @@
           @endphp
         @endforeach
         <div class="row center">
-          {{ $events->appends(['user' => request()->user])->links() }}
+          {{ $events->appends([
+            'user' => request()->user,
+            'categories' => request()->categories,
+            'features' => request()->features,
+            'sort' => request()->sort,
+            ])->links() }}
         </div>
       </div>
     </div>
@@ -81,9 +126,11 @@
   <br><br>
 @endsection
 @section('scripts')
+  @parent
   <script>
   $(document).ready(function(){
     $('.sidenav').sidenav();
+    $('select').select();
   });
   </script>
 @endsection

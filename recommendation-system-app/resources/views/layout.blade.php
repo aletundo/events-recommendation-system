@@ -29,9 +29,9 @@
   </nav>
   @yield('intro')
 
-  <div class="container">
+  {{-- <div class="container"> --}}
     @yield('container')
-  </div>
+  {{-- </div> --}}
 
   <footer class="page-footer orange" id="about">
     <div class="container">
