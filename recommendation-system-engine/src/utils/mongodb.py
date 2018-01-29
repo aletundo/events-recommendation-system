@@ -28,6 +28,7 @@ def init_users_collection(client):
             'city' : 'Milano',
             'age' : 25,
             'avatar': 'https://tinyfac.es/data/avatars/BA0CB1F2-8C79-4376-B13B-DD5FB8772537-200w.jpeg',
+            'categories_distribution' : [0.6, 0.2, 0.1, 0.1, 0],
         },
         {
             'firstname': 'Francesca',
@@ -36,6 +37,7 @@ def init_users_collection(client):
             'city' : 'Milano',
             'age' : 17,
             'avatar': 'https://tinyfac.es/data/avatars/03F55412-DE8A-4F83-AAA6-D67EE5CE48DA-200w.jpeg',
+            'categories_distribution' : [0, 0.2, 0.3, 0, 0.5],
         },
         {
             'firstname': 'Andrea',
@@ -44,6 +46,7 @@ def init_users_collection(client):
             'city' : 'Milano',
             'age' : 36,
             'avatar': 'https://tinyfac.es/data/avatars/B3CF5288-34B0-4A5E-9877-5965522529D6-200w.jpeg',
+            'categories_distribution' : [0.6, 0.1, 0.3, 0, 0],
         },
         {
             'firstname': 'Marta',
@@ -52,6 +55,7 @@ def init_users_collection(client):
             'city' : 'Milano',
             'age' : 22,
             'avatar': 'https://tinyfac.es/data/avatars/A7299C8E-CEFC-47D9-939A-3C8CA0EA4D13-200w.jpeg',
+            'categories_distribution' : [0.2, 0.2, 0.2, 0.2, 0.2],
         },
         {
             'firstname': 'Annalisa',
@@ -60,6 +64,7 @@ def init_users_collection(client):
             'city' : 'Milano',
             'age' : 45,
             'avatar': 'https://tinyfac.es/data/avatars/A7299C8E-CEFC-47D9-939A-3C8CA0EA4D13-200w.jpeg',
+            'categories_distribution' : [0, 0.4, 0.4, 0.05, 0.15],
         },
         {
             'firstname': 'Alessandro',
@@ -68,6 +73,7 @@ def init_users_collection(client):
             'city' : 'Roma',
             'age' : 19,
             'avatar': 'https://tinyfac.es/data/avatars/2DDDE973-40EC-4004-ABC0-73FD4CD6D042-200w.jpeg',
+            'categories_distribution' : [0.25, 0.35, 0.3, 0.05, 0.05],
         },
         {
             'firstname': 'Matteo',
@@ -76,6 +82,7 @@ def init_users_collection(client):
             'city' : 'Roma',
             'age' : 38,
             'avatar': 'https://tinyfac.es/data/avatars/344CFC24-61FB-426C-B3D1-CAD5BCBD3209-200w.jpeg',
+            'categories_distribution' : [1, 0, 0, 0, 0],
         },
         {
             'firstname': 'Alice',
@@ -84,6 +91,7 @@ def init_users_collection(client):
             'city' : 'Roma',
             'age' : 20,
             'avatar': 'https://tinyfac.es/data/avatars/03F55412-DE8A-4F83-AAA6-D67EE5CE48DA-200w.jpeg',
+            'categories_distribution' : [0.8, 0.2, 0, 0, 0],
         },
         {
             'firstname': 'Milena',
@@ -92,6 +100,7 @@ def init_users_collection(client):
             'city' : 'Roma',
             'age' : 29,
             'avatar': 'https://tinyfac.es/data/avatars/A7299C8E-CEFC-47D9-939A-3C8CA0EA4D13-200w.jpeg',
+            'categories_distribution' : [0.2, 0.2, 0.5, 0.1, 0],
         },
         {
             'firstname': 'Riccardo',
@@ -100,6 +109,7 @@ def init_users_collection(client):
             'city' : 'Roma',
             'age' : 51,
             'avatar': 'https://tinyfac.es/data/avatars/BA0CB1F2-8C79-4376-B13B-DD5FB8772537-200w.jpeg',
+            'categories_distribution' : [0.5, 0.4, 0.1, 0, 0],
         },
         {
             'firstname': 'Riccardino',
@@ -108,6 +118,7 @@ def init_users_collection(client):
             'city' : 'Milano',
             'age' : 23,
             'avatar': 'https://tinyfac.es/data/avatars/344CFC24-61FB-426C-B3D1-CAD5BCBD3209-200w.jpeg',
+            'categories_distribution' : [0.05, 0.05, 0.7, 0.1, 0.1],
         },
         {
             'firstname': 'Dario',
@@ -116,6 +127,7 @@ def init_users_collection(client):
             'city' : 'Milano',
             'age' : 37,
             'avatar': 'https://tinyfac.es/data/avatars/344CFC24-61FB-426C-B3D1-CAD5BCBD3209-200w.jpeg',
+            'categories_distribution' : [0.75, 0.15, 0.05, 0.05, 0],
         },
         {
             'firstname': 'Valeria',
@@ -124,6 +136,7 @@ def init_users_collection(client):
             'city' : 'Milano',
             'age' : 19,
             'avatar': 'https://tinyfac.es/data/avatars/A7299C8E-CEFC-47D9-939A-3C8CA0EA4D13-200w.jpeg',
+            'categories_distribution' : [0, 0.2, 0.05, 0.1, 0.65],
         },
         {
             'firstname': 'Franca',
@@ -132,6 +145,7 @@ def init_users_collection(client):
             'city' : 'Milano',
             'age' : 47,
             'avatar': 'https://tinyfac.es/data/avatars/A7299C8E-CEFC-47D9-939A-3C8CA0EA4D13-200w.jpeg',
+            'categories_distribution' : [0, 0, 0.6, 0.1, 0.3],
         },
         {
             'firstname': 'Piero',
@@ -140,6 +154,7 @@ def init_users_collection(client):
             'city' : 'Milano',
             'age' : 23,
             'avatar': 'https://tinyfac.es/data/avatars/344CFC24-61FB-426C-B3D1-CAD5BCBD3209-200w.jpeg',
+            'categories_distribution' : [0.4, 0.1, 0.5, 0, 0],
         },
         {
             'firstname': 'Ennio',
@@ -148,6 +163,7 @@ def init_users_collection(client):
             'city' : 'Roma',
             'age' : 35,
             'avatar': 'https://tinyfac.es/data/avatars/344CFC24-61FB-426C-B3D1-CAD5BCBD3209-200w.jpeg',
+            'categories_distribution' : [0.05, 0.1, 0, 0.05, 0.8],
         },
         {
             'firstname': 'Augusto',
@@ -156,6 +172,7 @@ def init_users_collection(client):
             'city' : 'Roma',
             'age' : 58,
             'avatar': 'https://tinyfac.es/data/avatars/344CFC24-61FB-426C-B3D1-CAD5BCBD3209-200w.jpeg',
+            'categories_distribution' : [0.25, 0, 0, 0, 0.75],
         },
         {
             'firstname': 'Flavia',
@@ -164,6 +181,7 @@ def init_users_collection(client):
             'city' : 'Roma',
             'age' : 29,
             'avatar': 'https://tinyfac.es/data/avatars/A7299C8E-CEFC-47D9-939A-3C8CA0EA4D13-200w.jpeg',
+            'categories_distribution' : [0.33, 0.47, 0.1, 0.1, 0],
         },
         {
             'firstname': 'Maurizia',
@@ -172,6 +190,7 @@ def init_users_collection(client):
             'city' : 'Roma',
             'age' : 33,
             'avatar': 'https://tinyfac.es/data/avatars/A7299C8E-CEFC-47D9-939A-3C8CA0EA4D13-200w.jpeg',
+            'categories_distribution' : [0.2, 0.6, 0.1, 0.04, 0.06],
         },
         {
             'firstname': 'Nadia',
@@ -180,6 +199,7 @@ def init_users_collection(client):
             'city' : 'Roma',
             'age' : 42,
             'avatar': 'https://tinyfac.es/data/avatars/A7299C8E-CEFC-47D9-939A-3C8CA0EA4D13-200w.jpeg',
+            'categories_distribution' : [0.6, 0.2, 0.1, 0.1, 0],
         },
         {
             'firstname': 'Piero',
@@ -188,6 +208,7 @@ def init_users_collection(client):
             'city' : 'Milano',
             'age' : 39,
             'avatar': 'https://tinyfac.es/data/avatars/344CFC24-61FB-426C-B3D1-CAD5BCBD3209-200w.jpeg',
+            'categories_distribution' : [0.22, 0.28, 0.3, 0.1, 0.1],
         },
         {
             'firstname': 'Roberto',
@@ -196,6 +217,7 @@ def init_users_collection(client):
             'city' : 'Milano',
             'age' : 29,
             'avatar': 'https://tinyfac.es/data/avatars/344CFC24-61FB-426C-B3D1-CAD5BCBD3209-200w.jpeg',
+            'categories_distribution' : [0.6, 0.1, 0.2, 0, 0.1],
         },
         {
             'firstname': 'Martina',
@@ -204,6 +226,7 @@ def init_users_collection(client):
             'city' : 'Milano',
             'age' : 46,
             'avatar': 'https://tinyfac.es/data/avatars/A7299C8E-CEFC-47D9-939A-3C8CA0EA4D13-200w.jpeg',
+            'categories_distribution' : [0.1, 0.1, 0, 0, 0.8],
         },
         {
             'firstname': 'Sara',
@@ -212,6 +235,7 @@ def init_users_collection(client):
             'city' : 'Milano',
             'age' : 34,
             'avatar': 'https://tinyfac.es/data/avatars/A7299C8E-CEFC-47D9-939A-3C8CA0EA4D13-200w.jpeg',
+            'categories_distribution' : [0.2, 0.1, 0.1, 0.4, 0.2],
         },
         {
             'firstname': 'Carlo',
@@ -220,6 +244,7 @@ def init_users_collection(client):
             'city' : 'Milano',
             'age' : 53,
             'avatar': 'https://tinyfac.es/data/avatars/344CFC24-61FB-426C-B3D1-CAD5BCBD3209-200w.jpeg',
+            'categories_distribution' : [0.2, 0, 0.2, 0.3, 0.3],
         },
         {
             'firstname': 'Gianfranco',
@@ -228,6 +253,7 @@ def init_users_collection(client):
             'city' : 'Roma',
             'age' : 55,
             'avatar': 'https://tinyfac.es/data/avatars/344CFC24-61FB-426C-B3D1-CAD5BCBD3209-200w.jpeg',
+            'categories_distribution' : [1, 0, 0, 0, 0],
         },
         {
             'firstname': 'Giulio',
@@ -236,6 +262,7 @@ def init_users_collection(client):
             'city' : 'Roma',
             'age' : 58,
             'avatar': 'https://tinyfac.es/data/avatars/344CFC24-61FB-426C-B3D1-CAD5BCBD3209-200w.jpeg',
+            'categories_distribution' : [0, 0, 0.05, 0.45, 0.5],
         },
         {
             'firstname': 'Laura',
@@ -244,6 +271,7 @@ def init_users_collection(client):
             'city' : 'Roma',
             'age' : 30,
             'avatar': 'https://tinyfac.es/data/avatars/A7299C8E-CEFC-47D9-939A-3C8CA0EA4D13-200w.jpeg',
+            'categories_distribution' : [0.5, 0.3, 0.1, 0.1, 0],
         },
         {
             'firstname': 'Alice',
@@ -252,6 +280,7 @@ def init_users_collection(client):
             'city' : 'Roma',
             'age' : 35,
             'avatar': 'https://tinyfac.es/data/avatars/A7299C8E-CEFC-47D9-939A-3C8CA0EA4D13-200w.jpeg',
+            'categories_distribution' : [0.2, 0.2, 0.06, 0.04, 0.5],
         },
         {
             'firstname': 'Alessandra',
@@ -260,5 +289,6 @@ def init_users_collection(client):
             'city' : 'Roma',
             'age' : 20,
             'avatar': 'https://tinyfac.es/data/avatars/A7299C8E-CEFC-47D9-939A-3C8CA0EA4D13-200w.jpeg',
+            'categories_distribution' : [0.3, 0.1, 0.2, 0.3, 0.1],
         },
     ])

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
-from flask import Flask, g, current_app
+from flask import Flask, g, current_app, request
 from flask_pymongo import PyMongo
 from utils import sqlite as sqlite_utils
 from utils import mongodb as mongodb_utils
@@ -27,27 +27,38 @@ def list_events():
 
 @app.route('/users/<string:user_id>/recommendations')
 def recommendations(user_id):
-    results = compute_recommendations(user_id)
+    features = extract_features(request)
+    results = compute_recommendations(user_id, features)
     events = list()
     for event_id in results['events']:
         events.append(mongodb_utils.get_events_collection(mongo).find_one({'_id': ObjectId(event_id)}))
     results['events'] = events
     return dumps(results)
 
-def compute_recommendations(target_user_id):
+def compute_recommendations(target_user_id, features):
+    if features is not None:
+        current_app.logger.info(features)
+    else:
+        current_app.logger.info('No features selected')
     target_user = mongodb_utils.get_users_collection(mongo).find_one({'_id': ObjectId(target_user_id)})
     users_list = list(mongodb_utils.get_users_collection(mongo).find({'_id': {'$ne': ObjectId(target_user_id)}}))
     similar_users_list = list()
     events_id_to_suggest = set()
-    threshold = 0.05
+    threshold = 0.04
     for user in users_list:
         target_user_events = [e['event_id'] for e in sqlite_utils.query_db('SELECT event_id FROM user_event WHERE user_id = ?', (target_user_id,)) if 'event_id' in e and e['event_id'] != 'None']
         user_events =  [e['event_id'] for e in sqlite_utils.query_db('SELECT event_id FROM user_event WHERE user_id = ?', (str(user.get('_id')),)) if 'event_id' in e and e['event_id'] != 'None']
         similarity = users_similarity(target_user, user, target_user_events, user_events)
         if similarity >= threshold:
+            user['similarity'] = similarity
             similar_users_list.append(user)
-            events_id_to_suggest = events_id_to_suggest.union(set(user_events).difference(set(target_user_events)))
-    return {'events': events_id_to_suggest, 'users': similar_users_list}
+    similar_users_list_ranked = sorted(similar_users_list, key=lambda k: k['similarity'], reverse=True)
+    for user in similar_users_list_ranked:
+        target_user_events = [e['event_id'] for e in sqlite_utils.query_db('SELECT event_id FROM user_event WHERE user_id = ?', (target_user_id,)) if 'event_id' in e and e['event_id'] != 'None']
+        user_events =  [e['event_id'] for e in sqlite_utils.query_db('SELECT event_id FROM user_event WHERE user_id = ?', (str(user.get('_id')),)) if 'event_id' in e and e['event_id'] != 'None']
+        events_id_to_suggest = events_id_to_suggest.union(set(user_events).difference(set(target_user_events)))
+
+    return {'events': events_id_to_suggest, 'users': similar_users_list_ranked}
 
 def category_normalization(user_category_freq):
     freq_sum = 0
@@ -65,6 +76,8 @@ def users_similarity(target_user, other_user, target_user_events, other_user_eve
     other_user_events_set = set(other_user_events)
     common_events = target_user_events_set.intersection(other_user_events_set)
 
+    if len(common_events) == 0:
+        return 0.0
     target_user_vect = []
     other_user_vect = []
     for event in common_events:
@@ -73,8 +86,15 @@ def users_similarity(target_user, other_user, target_user_events, other_user_eve
         other_user_category_weight = other_user_norm_freq[event_category]
         target_user_vect.append((1 * target_user_category_weight))
         other_user_vect.append((1 * other_user_category_weight))
+    alpha = len(common_events) / len(target_user_events)
+    return alpha * spatial.distance.cosine(target_user_vect, other_user_vect)
 
-    return spatial.distance.cosine(target_user_vect, other_user_vect)
+def extract_features(request):
+    features = list()
+    for i in range(0, 2):
+        if request.args.get('features[' + str(i) + ']'):
+            features.append(request.args.get('features[' + str(i) + ']'))
+    return features
 
 @app.before_first_request
 def init_data():

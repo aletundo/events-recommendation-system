@@ -355,9 +355,10 @@ def collect_events(graph, places, category, city):
             event['category'] = category
             event['place'] = event['place']['name']
             event['city'] = city[0]
-        print(events)
+        print(len(events))
         all_events.extend(events)
         print('Collected events for {}'.format(place['name']))
+    print(len(all_events))
     return all_events
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -367,19 +368,19 @@ if not os.path.isdir(data_dir):
     print('Data directory created')
 
 graph = get_graph_instance()
-milan_events = list()
-for category in milan_places.keys():
-    milan_places[category] = collect_places_id(graph, milan_places[category], category, ['Milano', 'Milan'])
-    milan_events.extend(collect_events(graph, milan_places[category], category, ['Milano', 'Milan']))
-
-with open(data_dir + '/Milan_events.json', 'w') as outfile:
-    json.dump(milan_events, outfile, ensure_ascii=False)
-    print('Created Milan events JSON file')
+# milan_events = list()
+# for category in milan_places.keys():
+#     milan_places[category] = collect_places_id(graph, milan_places[category], category, ['Milano', 'Milan'])
+#     milan_events.extend(collect_events(graph, milan_places[category], category, ['Milano', 'Milan']))
+#
+# with open(data_dir + '/Milan_events.json', 'w') as outfile:
+#     json.dump(milan_events, outfile, ensure_ascii=False)
+#     print('Created Milan events JSON file')
 
 rome_events = list()
 for category in rome_places.keys():
     rome_places[category] = collect_places_id(graph, rome_places[category], category, ['Roma', 'Rome'])
-    rome_events = collect_events(graph, rome_places[category], category, ['Roma', 'Rome'])
+    rome_events.extend(collect_events(graph, rome_places[category], category, ['Roma', 'Rome']))
 
 with open(data_dir + '/Rome_events.json', 'w') as outfile:
     json.dump(rome_events, outfile, ensure_ascii=False)
