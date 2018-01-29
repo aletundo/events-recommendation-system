@@ -44,7 +44,7 @@ def compute_recommendations(target_user_id, features):
     users_list = list(mongodb_utils.get_users_collection(mongo).find({'_id': {'$ne': ObjectId(target_user_id)}}))
     similar_users_list = list()
     events_id_to_suggest = set()
-    threshold = 0.04
+    threshold = 0.02
     for user in users_list:
         target_user_events = [e['event_id'] for e in sqlite_utils.query_db('SELECT event_id FROM user_event WHERE user_id = ?', (target_user_id,)) if 'event_id' in e and e['event_id'] != 'None']
         user_events =  [e['event_id'] for e in sqlite_utils.query_db('SELECT event_id FROM user_event WHERE user_id = ?', (str(user.get('_id')),)) if 'event_id' in e and e['event_id'] != 'None']

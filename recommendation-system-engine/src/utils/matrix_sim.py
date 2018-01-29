@@ -24,8 +24,6 @@ def simulate_users_events(client):
         choices = np.random.choice(categories, events_number, replace=True, p=user.get('categories_distribution'))
         user_category_freq = {'Arte': 0, 'Festa': 0, 'Sport': 0, 'Musica': 0, 'Cibo': 0}
         user_city = user.get('city')
-        # current_app.logger.info(user.get('categories_distribution'))
-        # current_app.logger.info(choices)
         for c in choices:
             user_category_freq[c] += 1
             if uniform(0, 1) > 0.3:

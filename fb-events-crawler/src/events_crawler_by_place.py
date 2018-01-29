@@ -368,14 +368,14 @@ if not os.path.isdir(data_dir):
     print('Data directory created')
 
 graph = get_graph_instance()
-# milan_events = list()
-# for category in milan_places.keys():
-#     milan_places[category] = collect_places_id(graph, milan_places[category], category, ['Milano', 'Milan'])
-#     milan_events.extend(collect_events(graph, milan_places[category], category, ['Milano', 'Milan']))
-#
-# with open(data_dir + '/Milan_events.json', 'w') as outfile:
-#     json.dump(milan_events, outfile, ensure_ascii=False)
-#     print('Created Milan events JSON file')
+milan_events = list()
+for category in milan_places.keys():
+    milan_places[category] = collect_places_id(graph, milan_places[category], category, ['Milano', 'Milan'])
+    milan_events.extend(collect_events(graph, milan_places[category], category, ['Milano', 'Milan']))
+
+with open(data_dir + '/Milan_events.json', 'w') as outfile:
+    json.dump(milan_events, outfile, ensure_ascii=False)
+    print('Created Milan events JSON file')
 
 rome_events = list()
 for category in rome_places.keys():
