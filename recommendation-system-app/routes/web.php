@@ -29,6 +29,7 @@ Route::get('/events', function (Request $request) {
       'query' => isset($request->features) ? ['features' => $request->features ] : [],
     ]);
     $results = json_decode($response->getBody());
+    $targetUser = $results->target_user;
     $users = $results->users;
     $events = collect($results->events);
     if ($request->sort) {
@@ -41,9 +42,9 @@ Route::get('/events', function (Request $request) {
           return $value;
         }
       });
-      return view('results', ['users' => $users, 'events' => paginateCollection($filtered, 12)]);
+      return view('results', ['targetUser' => $targetUser, 'users' => $users, 'events' => paginateCollection($filtered, 12)]);
     }
-    return view('results', ['users' => $users, 'events' => paginateCollection($events, 12)]);
+    return view('results', ['targetUser' => $targetUser, 'users' => $users, 'events' => paginateCollection($events, 12)]);
 })->name('events');
 
 function paginateCollection(Collection $collection, int $perPage){

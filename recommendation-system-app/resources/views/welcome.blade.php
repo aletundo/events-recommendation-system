@@ -70,8 +70,7 @@
           <div class="input-field col s12 m4">
             <select multiple name="features[]">
               <option selected value="" disabled>Choose a feature (optional)</option>
-              <option value="gender">City</option>
-              <option value="city">Gender</option>
+              <option value="city">City</option>
               <option value="age">Age</option>
             </select>
             <label>Features</label>

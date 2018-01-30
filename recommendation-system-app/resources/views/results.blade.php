@@ -6,6 +6,20 @@
   <div class="section" id="results">
     <div class="row">
       <div class="col s3">
+        <h5 class="light-blue-text">Target user</h5>
+        <ul class="collection">
+          <li class="collection-item avatar">
+            <img src="{{ $targetUser->avatar }}" alt="" class="circle">
+            <span class="title event-title">{{ $targetUser->firstname }} {{ $targetUser->lastname }}</span>
+            <p>
+              <span><i class="material-icons">location_city</i>&nbsp;{{ $targetUser->city }}</span>
+              <br>
+              <span><i class="material-icons">wc</i>&nbsp;{{ $targetUser->gender }}</span>
+              <br>
+              <span><i class="material-icons">cake</i>&nbsp;{{ $targetUser->age }}</span>
+            </p>
+          </li>
+        </ul>
         <h5 class="light-blue-text">Similar users</h5>
         <ul class="collection">
         @foreach ($users as $user)
@@ -18,6 +32,8 @@
               <span><i class="material-icons">wc</i>&nbsp;{{ $user->gender }}</span>
               <br>
               <span><i class="material-icons">cake</i>&nbsp;{{ $user->age }}</span>
+              <br>
+              <span><i class="material-icons">trending_up</i>&nbsp;{{ round($user->similarity, 4, PHP_ROUND_HALF_UP) }}</span>
             </p>
           </li>
         @endforeach
@@ -30,7 +46,7 @@
         <div class="row center vertical-align">
           <form action="{{ url()->full() }}" method="get">
             <input type="hidden" name="user" value="{{ request()->user }}">
-            <div class="col s5">
+            <div class="col s4">
               <div class="input-field">
                 <select multiple name="categories[]">
                   <option value="Arte" @if (in_array('Arte', request()->categories)) selected @endif>Arte</option>
@@ -42,31 +58,36 @@
                 <label>Categories</label>
               </div>
             </div>
-            <div class="col s3">
+            <div class="col s4">
+              <div class="input-field">
+                <select multiple name="features[]">
+                  <option selected value="" disabled>Choose a feature (optional)</option>
+                  <option value="city" @if (request()->features && in_array('city', request()->features)) selected @endif>City</option>
+                  <option value="age" @if (request()->features && in_array('age', request()->features)) selected @endif>Age</option>
+                </select>
+                <label>Features</label>
+              </div>
+            </div>
+            <div class="col s2">
               <label>Sort by category</label>
                  <div class="switch"><label>Off<input type="checkbox" name="sort" @isset(request()->sort))
                    checked
                  @endisset>
                     <span class="lever"></span>On</label></div>
             </div>
-            <div class="col s4">
+            <div class="col s2">
               <button class="btn waves-effect waves-light orange" type="submit" name="action">Refresh
                 <i class="material-icons right">refresh</i>
               </button>
             </div>
-            {{-- <div class="col s6">
-              {{ $events->appends([
-                'user' => request()->user,
-                'categories' => request()->categories,
-                'features' => request()->features,
-                ])->links() }}
-            </div>
-            <div class="col s3">
-              <label>Sort by category</label>
-                 <div class="switch"><label>Off<input type="checkbox">
-                    <span class="lever"></span>On</label></div>
-            </div> --}}
           </form>
+        </div>
+        <div class="row center">
+          {{ $events->appends([
+            'user' => request()->user,
+            'categories' => request()->categories,
+            'features' => request()->features,
+            ])->links() }}
         </div>
         @php
           $elements_counter = 0;
