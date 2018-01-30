@@ -122,12 +122,12 @@ def extract_features(request):
             features.append(request.args.get('features[' + str(i) + ']'))
     return features
 
-# @app.before_first_request
-# def init_data():
-#     sqlite_utils.init_db()
-#     mongodb_utils.init_users_collection(mongo)
-#     mongodb_utils.init_events_collection(mongo)
-#     simulation_utils.simulate_users_events(mongo)
+@app.before_first_request
+def init_data():
+    sqlite_utils.init_db()
+    mongodb_utils.init_users_collection(mongo)
+    mongodb_utils.init_events_collection(mongo)
+    simulation_utils.simulate_users_events(mongo)
 
 @app.teardown_appcontext
 def close_connection(exception):
