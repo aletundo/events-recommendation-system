@@ -57,7 +57,10 @@ $ docker run --rm -v $(pwd):/app composer/composer install
 $ docker-compose up --build
 ```
 Now you can type `localhost:8080` in your browser and use the application.
-The engine API is available at `localhost:5000`.
+The engine initializes the databases and simulates the users going to event action before to serve the first request.
+Therefore, the application may require some time to show up the first time.
+
+The engine API is available at `localhost:5000` for debug purposes.
 
 ## Versioning
 
