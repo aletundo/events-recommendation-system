@@ -8,6 +8,7 @@ from utils import matrix_sim as simulation_utils
 from bson.json_util import dumps
 from bson.objectid import ObjectId
 from scipy import spatial
+import operator
 
 app = Flask('recommendation-system-engine', instance_relative_config=True)
 app.config.from_object('config')
@@ -30,8 +31,9 @@ def recommendations(user_id):
     features = extract_features(request)
     results = compute_recommendations(user_id, features)
     events = list()
-    for event_id in results['events']:
-        events.append(mongodb_utils.get_events_collection(mongo).find_one({'_id': ObjectId(event_id)}))
+    for event in results['events']:
+        current_app.logger.info(event[0])
+        events.append(mongodb_utils.get_events_collection(mongo).find_one({'_id': ObjectId(event[0])}))
     results['events'] = events
     return dumps(results)
 
@@ -39,7 +41,7 @@ def compute_recommendations(target_user_id, features):
     target_user = mongodb_utils.get_users_collection(mongo).find_one({'_id': ObjectId(target_user_id)})
     users_list = list(mongodb_utils.get_users_collection(mongo).find({'_id': {'$ne': ObjectId(target_user_id)}}))
     similar_users_list = list()
-    events_id_to_suggest = set()
+    events_id_to_suggest = dict()
     initial_threshold = 0.02
     threshold = compute_threshold(initial_threshold, features)
     for user in users_list:
@@ -55,13 +57,16 @@ def compute_recommendations(target_user_id, features):
         if similarity >= threshold:
             user['similarity'] = similarity
             similar_users_list.append(user)
-    similar_users_list_ranked = sorted(similar_users_list, key=lambda k: k['similarity'], reverse=True)
-    for user in similar_users_list_ranked:
-        target_user_events = [e['event_id'] for e in sqlite_utils.query_db('SELECT event_id FROM user_event WHERE user_id = ?', (target_user_id,)) if 'event_id' in e and e['event_id'] != 'None']
-        user_events =  [e['event_id'] for e in sqlite_utils.query_db('SELECT event_id FROM user_event WHERE user_id = ?', (str(user.get('_id')),)) if 'event_id' in e and e['event_id'] != 'None']
-        events_id_to_suggest = events_id_to_suggest.union(set(user_events).difference(set(target_user_events)))
+            candidate_events = set(user_events).difference(set(target_user_events))
+            for event_id in candidate_events:
+                if event_id in events_id_to_suggest:
+                    events_id_to_suggest[event_id] += 1
+                else:
+                    events_id_to_suggest[event_id] = 1
 
-    return {'events': events_id_to_suggest, 'users': similar_users_list_ranked, 'target_user': target_user}
+    similar_users_list_ranked = sorted(similar_users_list, key=lambda k: k['similarity'], reverse=True)
+    events_id_to_suggest_ranked = sorted(events_id_to_suggest.items(), key=operator.itemgetter(1), reverse=True)
+    return {'events': events_id_to_suggest_ranked, 'users': similar_users_list_ranked, 'target_user': target_user}
 
 def category_normalization(user_category_freq):
     freq_sum = 0
