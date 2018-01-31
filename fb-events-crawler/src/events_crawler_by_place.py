@@ -362,7 +362,7 @@ def collect_events(graph, places, category, city):
     return all_events
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
-data_dir = '../../recommendation-system-engine/data'
+data_dir = '../data'
 if not os.path.isdir(data_dir):
     os.makedirs(data_dir)
     print('Data directory created')

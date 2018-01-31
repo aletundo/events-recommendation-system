@@ -6,8 +6,6 @@ events based on user profile preferences.
 
 ## How to use
 Minimum requirements:
- * python 3.5+
- * pip for python3
  * Docker Engine 17.09.0+
  * Docker Compose
 
@@ -18,28 +16,24 @@ It is implemented with a simple script located within `fb-events-crawler/src` di
 
 #### Preliminary steps
 
-First, you need to install some dependencies with [pip](https://pypi.python.org/pypi/pip):
+First, you need to build the crawler Docker image:
 ```
 $ cd fb-events-crawler/
-$ pip3 install -r requirements.txt
+$ docker build -t fb-events-crawler:0.1.0 .
 ```
 
-Since facebook-sdk last release available is too old you need to install it manually
-how explained here: https://facebook-sdk.readthedocs.io/en/latest/install.html#installing-from-git
+Second, you need to create a Facebook App for Developer in order to get your CLIENT_ID and CLIENT_SECRET which made your API token.
 
-Second, you need to create a Facebook App for Developer.
-Then, run `export` command for CLIENT_ID and CLIENT_SECRET.
-
-Example:  
-```
- $ export CLIENT_ID="Your facebook app's ID"
- $ export CLIENT_SECRET="Your facebook app's secret key"
-```
 #### Run the crawler
-Running the crawler is very simple, you need to run the following command:
+Running the crawler is very simple, you need to run the following commands substituting CLIENT_ID and CLIENT_SECRET values accordingly:
 ```
-$ cd fb-events-crawler/src/
-$ python3 events_crawler_by_place.py
+$ cd fb-events-crawler/
+$ docker run --rm -it -v $(pwd):/srv/fb-events-crawler -u $(id -u):$(id -g) -e CLIENT_ID="Your client id" -e CLIENT_SECRET="Your client secret" fb-events-crawler:0.1.0
+```
+Two JSON files will be created within `fb-events-crawler/data` directory.
+Copy the `data` directory into `recommendation-system-engine`:
+```
+$ cp -r fb-events-crawler/data recommendation-system-engine
 ```
 
 ### How to run the engine and the application
@@ -49,7 +43,7 @@ You need to install some PHP dependencies for the application:
 
 ```
 $ cd recommendation-system-app/
-$ docker run --rm -v $(pwd):/app composer/composer install
+$ docker run --rm -v $(pwd):/app -u $(id -u):$(id -g) composer/composer install
 ```
 
 #### Run the system with Docker Compose
