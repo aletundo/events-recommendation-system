@@ -3,12 +3,15 @@ from flask import current_app
 from bson.json_util import loads
 import glob, json, os
 
+# Get the users collection from the database
 def get_users_collection(client):
     return client.db.users
 
+# Get the events collection from the database
 def get_events_collection(client):
     return client.db.events
 
+# Init events collection from JSON files
 def init_events_collection(client):
     collection = get_events_collection(client)
     collection.delete_many({})
@@ -17,6 +20,7 @@ def init_events_collection(client):
         events = json.load(open(json_file))
         collection.insert_many(events)
 
+# Init ursers collection from hardcoded representation
 def init_users_collection(client):
     collection = get_users_collection(client)
     collection.delete_many({})

@@ -1,8 +1,7 @@
 # events-recommendation-system
 
 ## Synopsis
-This main aim of this project is to create a recommendation system for Facebook
-events based on user profile preferences.
+This main aim of this project is to create a recommendation system for Facebook events based on user profile preferences.
 
 ## How to use
 Minimum requirements:
