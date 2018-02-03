@@ -7,6 +7,7 @@ services:
     image: recommendation-system-app:0.1.0
     working_dir: /var/www/recommendation-system-app
     env_file: ./recommendation-system-app/.env
+    restart: on-failure
     depends_on:
       - recommendation-system-engine
     networks:
@@ -29,7 +30,7 @@ services:
       - backend
       - mongodb
   mongodb:
-    restart: always
+    restart: on-failure
     image: mongo:3.6-jessie
     volumes:
       - type: volume
